@@ -46,8 +46,8 @@ public:
     TrafficLight() : _currentPhase(TrafficLightPhase::red) {}
     ~TrafficLight() {}
     // getters / setters
-    void setCurrentPhase(TrafficLightPhase phase) { _currentPhase = phase; };
-    TrafficLightPhase getCurrentPhase() {return _currentPhase; };
+    void setCurrentPhase(TrafficLightPhase phase);
+    TrafficLightPhase getCurrentPhase();
     // typical behaviour methods
     void waitForGreen();
     void simulate();
@@ -61,6 +61,7 @@ private:
     std::condition_variable _condition;
     std::mutex _mutex;
     TrafficLightPhase _currentPhase;
+    MessageQueue<TrafficLightPhase> _messages;
 };
 
 #endif

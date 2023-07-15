@@ -13,13 +13,17 @@ T MessageQueue<T>::receive()
     // The received object should then be returned by the receive function. 
 }
 
+*/
+
 template <typename T>
 void MessageQueue<T>::send(T &&msg)
 {
     // FP.4a : The method send should use the mechanisms std::lock_guard<std::mutex> 
     // as well as _condition.notify_one() to add a new message to the queue and afterwards send a notification.
+    std::lock_guard<std::mutex> lck(_mtx);
+    _queue.emplace_back(std::move(msg));
+    _cv.notify_one();
 }
-*/
 
 /* Implementation of class "TrafficLight" */
 
@@ -33,7 +37,23 @@ void TrafficLight::waitForGreen()
 }
 
 
+
+
 */
+
+void TrafficLight::setCurrentPhase(TrafficLightPhase phase)
+{
+    std::lock_guard<std::mutex> lck(_mutex);
+    _currentPhase = phase;
+    _messages.send(std::move(phase));
+}
+
+TrafficLightPhase TrafficLight::getCurrentPhase()
+{
+    std::lock_guard<std::mutex> lck(_mutex);
+    return _currentPhase;
+}
+
 void TrafficLight::simulate()
 {
     // FP.2b : Finally, the private method „cycleThroughPhases“ should be started in a thread when the public method „simulate“ is called. To do this, use the thread queue in the base class. 
